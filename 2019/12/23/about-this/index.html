@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   
-  <title>about-this | Heternally</title>
+  <title>this全面解析 | Heternally</title>
   
   
   <meta name="description" content="博客，前端博客，前端技术博客">
@@ -256,7 +256,7 @@
   
     <h1 class="title">
       <a href="/2019/12/23/about-this/">
-        about-this
+        this全面解析
       </a>
     </h1>
   
@@ -295,6 +295,14 @@
         
           
             
+  
+  <div class='new-meta-item category'>
+    <a href='/categories/Javascript/this/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Javascript&nbsp;/&nbsp;this</p>
+    </a>
+  </div>
+
 
           
         
@@ -323,14 +331,14 @@
       <a class='notlink'>
         <i class="fas fa-keyboard" aria-hidden="true"></i>
         <p>字数统计:</p>
-        <p>0字</p>
+        <p>2k字</p>
       </a>
     </div>
     <div class="new-meta-item readtime">
       <a class='notlink'>
         <i class="fas fa-hourglass-half" aria-hidden="true"></i>
         <p>阅读时长≈</p>
-        <p>1分</p>
+        <p>7分</p>
       </a>
     </div>
   
@@ -352,7 +360,88 @@
 
     <section class="article typo">
       <div class="article-entry" itemprop="articleBody">
-        
+        <h2 id="一、引子"><a href="#一、引子" class="headerlink" title="一、引子"></a>一、引子</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">"Heternally"</span>;</span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  name: <span class="string">"zl"</span>,</span><br><span class="line">  foo: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> foo = obj.foo;</span><br><span class="line"></span><br><span class="line">obj.foo(); <span class="comment">// "zl"</span></span><br><span class="line">foo(); <span class="comment">// "Heternally"</span></span><br></pre></td></tr></table></figure>
+<p>可以看到上面代码中，<code>obj.foo</code>和<code>foo</code>都指向同一个函数，但是执行结果却不一样；产生这种差异的原因，就在于函数体内部使用了<code>this</code>关键字；</p>
+<p>相信很多文章都会说，<strong><code>this</code>指向的是函数运行时所在的环境。</strong></p>
+<p>所以上面的问题，对<code>obj.foo()</code>来说，<code>foo</code>运行在<code>obj</code>环境中，所以<code>this</code>指向<code>obj</code>；对于<code>foo()</code>来说，<code>foo</code>运行在全局环境下，所以在非严格模式下<code>this</code>指向<code>window</code>，所以导致了两者运行的结果不同；</p>
+<p>看到这有的同学可能就有疑问了，函数的运行环境是如何判定的？为什么<code>obj.foo()</code>就是在<code>obj</code>环境，为何<code>var foo = obj.foo;</code>，<code>foo()</code>就在全局环境执行了；</p>
+<p>接下来就跟同学们讲解一下为何<code>Javascript</code>这样处理，带你彻底理解<code>this</code>。</p>
+<h2 id="二、为何设计this关键字"><a href="#二、为何设计this关键字" class="headerlink" title="二、为何设计this关键字"></a>二、为何设计<code>this</code>关键字</h2><p>要理解<code>this</code>的设计，我们需要先了解<code>Javascript</code>中内存的数据结构；</p>
+<p><code>Javascript</code>内置七种数据类型，可以分为<strong>基本数据类型</strong>和<strong>对象数据类型</strong>，在这里我们主要讲解一下<strong>对象数据类型</strong>在内存中的存储方式；</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123; <span class="attr">name</span>: <span class="string">'Heternally'</span>&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>Javascript</code>引擎在处理上面代码时，会在<strong>堆内存</strong>中，生成一个对象<code>{ name: &#39;Heternally&#39;}</code>，然后把这个对象在内存中的地址赋值给变量<code>obj</code>。所以在读取<code>obj.name</code>时，需要先从变量<code>obj</code>拿到地址，然后再从对应地址中拿到对象，再返回它的<code>name</code>属性。</p>
+<p>可能看到这里会有同学要问这跟<code>this</code>有啥关系，别急，接下来重点来啦：</p>
+<p>对象的属性可能是一个函数，当引擎遇到对象属性是函数的情况，会将函数单独保存在<strong>堆</strong>中，然后再将函数的地址赋值给对象属性；而<code>Javascript</code>是允许在函数体内引用当前环境的其他变量，那么问题来了，函数可以在不同的运行环境执行，所以我们就需要一种机制，能够在函数内获得当前运行环境，由此诞生了<code>this</code>，<strong>它的设计目的就是指向函数运行时所在的环境。</strong></p>
+<p>理解了<code>this</code>的设计，剩下的难点就是如何正确的判定它所指向的环境。</p>
+<h2 id="三、如何正确判定this指向"><a href="#三、如何正确判定this指向" class="headerlink" title="三、如何正确判定this指向"></a>三、如何正确判定<code>this</code>指向</h2><p>总结了<code>this</code>的绑定规则总共是有下面5种：</p>
+<ul>
+<li>1、默认绑定（严格/非严格模式）</li>
+<li>2、隐式绑定</li>
+<li>3、显式绑定</li>
+<li>4、new绑定</li>
+<li>5、ES6箭头函数绑定</li>
+</ul>
+<h3 id="1、默认绑定"><a href="#1、默认绑定" class="headerlink" title="1、默认绑定"></a>1、默认绑定</h3><h4 id="1-1-严格模式"><a href="#1-1-严格模式" class="headerlink" title="1.1 严格模式"></a>1.1 严格模式</h4><p>在严格模式下，不能将全局对象<code>window</code>作为默认绑定，此时<code>this</code>会绑定到<code>undefined</code>，但是在严格模式下调用函数则不会影响默认绑定。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line"><span class="meta">  "use strict"</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">var</span> name = <span class="string">"Heternally"</span>;</span><br><span class="line">  foo(); </span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Uncaught TypeError: Cannot read property 'name' of undefined at foo</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">'Heternally'</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line"><span class="meta">  "use strict"</span></span><br><span class="line">  foo();</span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Heternally</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-非严格模式"><a href="#1-2-非严格模式" class="headerlink" title="1.2 非严格模式"></a>1.2 非严格模式</h4><p>在非严格模式下，此时<code>this</code>就指向<strong>全局对象</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">'Heternally'</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo(); <span class="comment">// Heternally</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2、隐式绑定"><a href="#2、隐式绑定" class="headerlink" title="2、隐式绑定"></a>2、隐式绑定</h3><p>当函数作为对象的属性存在，通过<strong>对象属性执行函数</strong>时，此时隐式绑定规则会将<code>this</code>绑定到对象上；</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">'Heternally'</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'zl'</span>,</span><br><span class="line">  foo,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">obj.foo(); <span class="comment">// zl</span></span><br></pre></td></tr></table></figure>
+
+<p>注意上面代码中函数执行方式是通过<strong>对象属性</strong>执行</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">'Heternally'</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'zl'</span>,</span><br><span class="line">  foo,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo(); <span class="comment">// Heternally</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> foo1 = obj.foo; </span><br><span class="line"></span><br><span class="line">foo1(); <span class="comment">// Heternally</span></span><br><span class="line"></span><br><span class="line">obj.foo(); <span class="comment">// zl</span></span><br></pre></td></tr></table></figure>
+<p>由上面代码可以发现，通过赋值操作后执行函数，会应用默认绑定，此时在非严格模式下<code>this</code>会指向全局对象。</p>
+<p>同样的，函数传参也是一种隐式赋值，此时在回调函数中会丢失<code>this</code>绑定。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span>(<span class="params">fn</span>) </span>&#123;</span><br><span class="line">  fn();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'zl'</span>,</span><br><span class="line">  foo,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> name = <span class="string">'Heternally'</span>;</span><br><span class="line"></span><br><span class="line">Foo(obj.foo); <span class="comment">// Heternally</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3、显式绑定"><a href="#3、显式绑定" class="headerlink" title="3、显式绑定"></a>3、显式绑定</h3><p><strong>通过 <code>call</code> <code>apply</code> <code>bind</code>绑定</strong></p>
+<p>相信同学们都知道这三个方法的作用，这边就主要拿<code>call</code>来举例；</p>
+<blockquote>
+<p>一句话介绍<code>call</code>：使用一个指定的<code>this</code>和若干个指定的参数调用某个函数或方法。</p>
+</blockquote>
+<p>在讲解<code>call</code>显示绑定之前，我们先想一下<code>call</code>做了哪些事儿。</p>
+<ul>
+<li>将函数设为对象的属性</li>
+<li>指定函数的this，并进行传参</li>
+<li>执行&amp;删除函数</li>
+<li>判定如果没有指定要绑定的this，非严格模式下默认指向全局对象</li>
+</ul>
+<p>可以看到值调用<code>call</code>方法后，会将<code>this</code>绑定到指定对象，所以称为<strong>显示绑定</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'Heternally'</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">  name: <span class="string">'Heternally1'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> name = <span class="string">'zl'</span>;</span><br><span class="line"></span><br><span class="line">foo.call(obj); <span class="comment">// Heternally  调用call方法后强行将foo函数的this指向来obj对象上</span></span><br><span class="line"></span><br><span class="line">foo.call(obj).call(obj1); <span class="comment">// Heternally  多次调用call方法，以第一次为准</span></span><br><span class="line"></span><br><span class="line">foo.call(obj1).call(obj); <span class="comment">// Heternally1</span></span><br><span class="line"></span><br><span class="line">foo.call();<span class="comment">// zl 没有传入指定对象，所以this默认指向全局对象</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果call、apple、bind的绑定对象是null或者undefined，那么实际上在调用时这些值都会被忽略，所以使用的是默认绑定规则</p>
+</blockquote>
+<h3 id="4、通过new绑定"><a href="#4、通过new绑定" class="headerlink" title="4、通过new绑定"></a>4、通过new绑定</h3><p>我们先看看构造函数在使用<code>new</code>后，执行了什么操作：</p>
+<ul>
+<li>它创建（构造）了一个全新的对象</li>
+<li>它会被执行[[Prototype]]（也就是<strong>proto</strong>）链接</li>
+<li>它使this指向新创建的对象</li>
+<li>通过new创建的每个对象将最终被[[Prototype]]链接到这个函数的prototype对象上</li>
+<li>如果函数没有返回对象类型Object(包含Functoin, Array, Date, RegExg, Error)，那么new表达式中的函数调用将返回该对象引用</li>
+</ul>
+<p>所以在使用<code>new</code>调用构造函数后，会构造一个新对象并将函数调用中的<code>this</code>绑定到新对象上。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">'zl'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.name = name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> bar = &#123;</span><br><span class="line">  name: <span class="string">'object'</span>,</span><br><span class="line">  foo1: <span class="keyword">new</span> foo(<span class="string">'Heternally'</span>),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(bar.foo1.name); <span class="comment">// Heternally</span></span><br></pre></td></tr></table></figure>
+
+<p>构造函数是存在返回值的，可以将函数的返回值分成三种情况：</p>
+<ul>
+<li>返回一个对象</li>
+<li>没有返回值，即默认返回<code>undefined</code></li>
+<li>返回基本数据类型</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、返回一个对象</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span>(<span class="params">name,age</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.name = name;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    age</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> bar = <span class="keyword">new</span> Foo(<span class="string">"Heternally"</span>,<span class="string">"18"</span>);</span><br><span class="line"></span><br><span class="line">bar.name; <span class="comment">// undefined</span></span><br><span class="line"></span><br><span class="line">bar.age; <span class="comment">// 18</span></span><br><span class="line"></span><br><span class="line"><span class="number">2</span>、没有返回值</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span>(<span class="params">name,age</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.name = name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> bar = <span class="keyword">new</span> Foo(<span class="string">"Heternally"</span>,<span class="string">"18"</span>);</span><br><span class="line"></span><br><span class="line">bar.name; <span class="comment">// Heternally</span></span><br><span class="line"></span><br><span class="line">bar.age; <span class="comment">// undefined</span></span><br><span class="line"></span><br><span class="line"><span class="number">3</span>、返回基本数据类型</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span>(<span class="params">name,age</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.name = name;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">123</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> bar = <span class="keyword">new</span> Foo(<span class="string">"Heternally"</span>,<span class="string">"18"</span>);</span><br><span class="line"></span><br><span class="line">bar.name; <span class="comment">// Heternally</span></span><br><span class="line"></span><br><span class="line">bar.age; <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>
+
+<p>所以使用<code>new</code>绑定时，需要判断函数返回的值是否为一个对象，如果是对象，那么<code>this</code>会绑定到返回的对象上。</p>
+<h3 id="5、ES6箭头函数绑定"><a href="#5、ES6箭头函数绑定" class="headerlink" title="5、ES6箭头函数绑定"></a>5、ES6箭头函数绑定</h3><p>ES6新增了一种函数类型：箭头函数，箭头函数调用时无法使用上面四种规则了，它和普通函数最不同的一点就是对于箭头函数的<code>this</code>指向，是根据它外层（函数/全局）作用域来决定。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">(<span class="params">name</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'Heternally'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">  name: <span class="string">'text'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> name = <span class="string">'zl'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> foo1 = foo();</span><br><span class="line">foo1(); <span class="comment">// zl</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> foo2 = foo.call(obj);</span><br><span class="line">foo2(); <span class="comment">// Heternally</span></span><br><span class="line"></span><br><span class="line">foo2.call(obj1); <span class="comment">// Heternally 可以看到，箭头函数的`this`绑定后无法被修改</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="6、规则优先级"><a href="#6、规则优先级" class="headerlink" title="6、规则优先级"></a>6、规则优先级</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、<span class="keyword">new</span>绑定</span><br><span class="line"><span class="keyword">var</span> obj = <span class="keyword">new</span> Foo();</span><br><span class="line"><span class="keyword">this</span>绑定新的对象上</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>、显示绑定</span><br><span class="line"><span class="keyword">var</span> obj = foo.call(bar);</span><br><span class="line"><span class="keyword">this</span>绑定到指定对象上，若指定对象为<span class="literal">null</span>/<span class="literal">undefined</span>或着没传，则使用默认绑定规则</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>、隐式绑定</span><br><span class="line"><span class="keyword">var</span> obj = bar.foo();</span><br><span class="line"><span class="keyword">this</span>绑定到调用方法的对象上</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>、默认绑定</span><br><span class="line">foo();</span><br><span class="line"><span class="keyword">this</span>在严格模式下绑定到<span class="literal">undefined</span></span><br><span class="line">在非严格模式下绑定到全局对象</span><br></pre></td></tr></table></figure>
+
+
       </div>
       
       
@@ -364,7 +453,7 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-12-23T12:04:25+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-12-23T12:10:01+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
     <p>更新于 2019年12月23日</p>
@@ -375,6 +464,9 @@
       
         
           
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/Javascript/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Javascript</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/tags/this/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>this</p></a></div>
+
 
         
       
@@ -386,7 +478,7 @@
       
         <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
           
-          href="http://connect.qq.com/widget/shareqq/index.html?url=https://github.com/HEternally/2019/12/23/about-this/&title=about-this | Heternally&summary="
+          href="http://connect.qq.com/widget/shareqq/index.html?url=https://github.com/HEternally/2019/12/23/about-this/&title=this全面解析 | Heternally&summary="
           
           >
           
@@ -398,7 +490,7 @@
       
         <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
           
-          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://github.com/HEternally/2019/12/23/about-this/&title=about-this | Heternally&summary="
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://github.com/HEternally/2019/12/23/about-this/&title=this全面解析 | Heternally&summary="
           
           >
           
@@ -410,7 +502,7 @@
       
         <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
           
-          href="http://service.weibo.com/share/share.php?url=https://github.com/HEternally/2019/12/23/about-this/&title=about-this | Heternally&summary="
+          href="http://service.weibo.com/share/share.php?url=https://github.com/HEternally/2019/12/23/about-this/&title=this全面解析 | Heternally&summary="
           
           >
           
@@ -492,7 +584,7 @@
 
   <script>
     window.subData = {
-      title: 'about-this',
+      title: 'this全面解析',
       tools: true
     }
   </script>
@@ -613,6 +705,20 @@
           
             
               
+  <section class='widget toc-wrapper'>
+    
+<header class='pure'>
+  <div><i class="fas fa-list fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;本文目录</div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content pure'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、引子"><span class="toc-text">一、引子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、为何设计this关键字"><span class="toc-text">二、为何设计this关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、如何正确判定this指向"><span class="toc-text">三、如何正确判定this指向</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、默认绑定"><span class="toc-text">1、默认绑定</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-严格模式"><span class="toc-text">1.1 严格模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-非严格模式"><span class="toc-text">1.2 非严格模式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、隐式绑定"><span class="toc-text">2、隐式绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、显式绑定"><span class="toc-text">3、显式绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、通过new绑定"><span class="toc-text">4、通过new绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5、ES6箭头函数绑定"><span class="toc-text">5、ES6箭头函数绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6、规则优先级"><span class="toc-text">6、规则优先级</span></a></li></ol></li></ol>
+    </div>
+  </section>
+
 
             
           
@@ -758,6 +864,10 @@
         
           <li><a class="flat-box" title="/categories/Hexo/" href="/categories/Hexo/"><div class='name'>Hexo</div><div class='badge'>(1)</div></a></li>
         
+          <li><a class="flat-box" title="/categories/Javascript/" href="/categories/Javascript/"><div class='name'>Javascript</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child" title="/categories/Javascript/this/" href="/categories/Javascript/this/"><div class='name'>this</div><div class='badge'>(1)</div></a></li>
+        
       </ul>
     </div>
   </section>
@@ -807,7 +917,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/hexo/" style="font-size: 14px; color: #999">hexo</a>
+      <a href="/tags/Javascript/" style="font-size: 14px; color: #999">Javascript</a> <a href="/tags/hexo/" style="font-size: 14px; color: #999">hexo</a> <a href="/tags/this/" style="font-size: 14px; color: #999">this</a>
     </div>
   </section>
 
