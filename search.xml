@@ -4,7 +4,75 @@
   
     
     <entry>
-      <title>498.对角线遍历 (leetcode)</title>
+      <title>41.缺失的第一个正数 (leetcode hard)</title>
+      <link href="/2019/12/27/first-missing-positive/"/>
+      <url>/2019/12/27/first-missing-positive/</url>
+      
+        <content type="html"><![CDATA[<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><blockquote><p>给定一个未排序的整数数组，找出其中没有出现的最小的正整数。</p></blockquote><h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p><img src="/2019/12/27/first-missing-positive/example.png" alt="示例"></p><h2 id="解法思路"><a href="#解法思路" class="headerlink" title="解法思路"></a>解法思路</h2><h3 id="思路一"><a href="#思路一" class="headerlink" title="思路一"></a>思路一</h3><p>遍历一次数组把大于等于1的和小于数组大小的值放到原数组对应位置，然后再遍历一次数组查当前下标是否和值对应，如果不对应那这个下标就是答案，否则遍历完都没出现那么答案就是数组长度加1。</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (nums.length === <span class="number">0</span> || (nums.length === <span class="number">1</span> &amp;&amp; nums[<span class="number">0</span>] != <span class="number">1</span>) ) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">swap</span>(<span class="params">i,j</span>)</span>&#123;</span><br><span class="line">  nums[i] = nums[i] ^ nums[j];</span><br><span class="line">  nums[j] = nums[i] ^ nums[j];</span><br><span class="line">  nums[i] = nums[i] ^ nums[j];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 桶排序</span></span><br><span class="line"><span class="keyword">let</span> len = nums.length;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span>;i&lt;len;i++)&#123;</span><br><span class="line">  <span class="comment">// 新索引 nums[i] 处于 [1,length] 且不等于自身（如第三项不能为3：nums[2]!==3） 且 nums[新索引] 未排好</span></span><br><span class="line">  <span class="keyword">while</span>(nums[i]&gt;=<span class="number">1</span>&amp;&amp;nums[i]&lt;=len&amp;&amp;nums[i]!==i+<span class="number">1</span>&amp;&amp;nums[nums[i]<span class="number">-1</span>]!==nums[i])&#123;</span><br><span class="line">    swap(i,nums[i]<span class="number">-1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> j=<span class="number">0</span>;j&lt;len;j++)&#123;</span><br><span class="line">  <span class="keyword">if</span>(nums[j]!==j+<span class="number">1</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> j+<span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> len + <span class="number">1</span></span><br></pre></td></tr></table></figure><p><img src="/2019/12/27/first-missing-positive/submit1.png" alt="提交"></p><h3 id="思路二"><a href="#思路二" class="headerlink" title="思路二"></a>思路二</h3><p>定义空数组，循环目标数组，将空数组中对应目标数组值的下标设为true；<br>最后遍历定义的数组，返回第一个值不为true的下标</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr=[],len=nums.length;</span><br><span class="line"><span class="keyword">if</span>(len===<span class="number">0</span>||len===<span class="number">1</span>&amp;&amp;nums[<span class="number">0</span>]!==<span class="number">1</span>)<span class="keyword">return</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span>;i&lt;len;i++)&#123;</span><br><span class="line">  <span class="keyword">if</span>(nums[i]&gt;=<span class="number">0</span>)arr[nums[i]]=<span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(!arr.length)<span class="keyword">return</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">let</span> len1=arr.length;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">1</span>;i&lt;len1;i++)&#123;</span><br><span class="line">  <span class="keyword">if</span>(!arr[i])&#123;</span><br><span class="line">    <span class="keyword">return</span> i</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(i===len1<span class="number">-1</span>)<span class="keyword">return</span> len1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><img src="/2019/12/27/first-missing-positive/submit2.png" alt="提交"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Javascript </category>
+          
+          <category> Leetcode </category>
+          
+          <category> Array </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Javascript </tag>
+            
+            <tag> Leetcode </tag>
+            
+            <tag> Array </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Javascript深入之闭包</title>
+      <link href="/2019/12/26/closure/"/>
+      <url>/2019/12/26/closure/</url>
+      
+        <content type="html"><![CDATA[<h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>闭包（closure）属于<code>Javascript</code>的一个难点，很多高级应用都需要依赖闭包实现；</p><p>首先先来个例子：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> name = <span class="string">'Heternally'</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getName</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(name);</span><br><span class="line">&#125;</span><br><span class="line">getName(); <span class="comment">// Heternally</span></span><br></pre></td></tr></table></figure><p>可以看到，函数<code>getName</code>内可以读取全局变量；但是，在函数外就无法读取函数内部声明的变量。</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getName</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> name = <span class="string">'Heternally'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(name); <span class="comment">// name is not defined</span></span><br></pre></td></tr></table></figure><p>有同学看到这可能会说，这不是作用域链的问题嘛，但是咱在这里是为了引出闭包；</p><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/A_re-introduction_to_JavaScript" target="_blank" rel="noopener">MDN</a>给到闭包的定义是：</p><blockquote><p>闭包是指那些能够访问自由变量的函数</p></blockquote><p>什么是自由变量呢？</p><blockquote><p>自由变量是指在函数中使用，但既不是函数的参数也不是函数局部变量的变量，其实就是另一个函数作用域中的变量</p></blockquote><p>关于这个也可以从<strong>红宝书</strong>上对于闭包的定义中看出：<strong>闭包是指有权访问另外一个函数作用域的变量的函数</strong></p><p>因此，可以得出闭包由两部分组成：</p><blockquote><p>闭包 = 函数 + 函数可访问的自由变量</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Javascript </category>
+          
+          <category> 深入系列 </category>
+          
+          <category> 深入系列 </category>
+          
+          <category> 闭包 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Javascript </tag>
+            
+            <tag> 深入系列 </tag>
+            
+            <tag> 闭包 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>498.对角线遍历 (leetcode mid)</title>
       <link href="/2019/12/26/diagonal-traverse/"/>
       <url>/2019/12/26/diagonal-traverse/</url>
       
@@ -48,6 +116,10 @@
           
           <category> Javascript </category>
           
+          <category> 深入系列 </category>
+          
+          <category> 深入系列 </category>
+          
           <category> this </category>
           
       </categories>
@@ -56,6 +128,8 @@
         <tags>
             
             <tag> Javascript </tag>
+            
+            <tag> 深入系列 </tag>
             
             <tag> this </tag>
             

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   
-  <title>498.对角线遍历 (leetcode mid) | Heternally</title>
+  <title>41.缺失的第一个正数 (leetcode hard) | Heternally</title>
   
   
   <meta name="description" content="博客，前端博客，前端技术博客">
@@ -255,8 +255,8 @@
         
   
     <h1 class="title">
-      <a href="/2019/12/26/diagonal-traverse/">
-        498.对角线遍历 (leetcode mid)
+      <a href="/2019/12/27/first-missing-positive/">
+        41.缺失的第一个正数 (leetcode hard)
       </a>
     </h1>
   
@@ -287,7 +287,7 @@
             <div class="new-meta-item date">
   <a class='notlink'>
     <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-    <p>2019-12-26</p>
+    <p>2019-12-27</p>
   </a>
 </div>
 
@@ -331,7 +331,7 @@
       <a class='notlink'>
         <i class="fas fa-keyboard" aria-hidden="true"></i>
         <p>字数统计:</p>
-        <p>316字</p>
+        <p>387字</p>
       </a>
     </div>
     <div class="new-meta-item readtime">
@@ -361,11 +361,16 @@
     <section class="article typo">
       <div class="article-entry" itemprop="articleBody">
         <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><blockquote>
-<p>给定一个含有 M x N 个元素的矩阵（M 行，N 列），请以对角线遍历的顺序返回这个矩阵中的所有元素，对角线遍历如下图所示。<br>说明:给定矩阵中的元素总数不会超过 100000 。</p>
+<p>给定一个未排序的整数数组，找出其中没有出现的最小的正整数。</p>
 </blockquote>
-<p>示例：</p>
-<p><img src="/2019/12/26/diagonal-traverse/example.png" alt="示例"></p>
-<h2 id="解法"><a href="#解法" class="headerlink" title="解法"></a>解法</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Javascript 解法</span></span><br><span class="line"><span class="keyword">var</span> findDiagonalOrder = <span class="function"><span class="keyword">function</span>(<span class="params">matrix</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 设m为纵坐标，n为横坐标</span></span><br><span class="line">    <span class="comment">// 据题意可知，当m+n为奇数时向下遍历，m+n为偶数时向上遍历</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 遍历方式</span></span><br><span class="line">    <span class="comment">// 向上遍历时：m递减，n递增</span></span><br><span class="line">    <span class="comment">// 向下遍历时：m递增，n递减</span></span><br><span class="line">    <span class="comment">// 以此循环</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** 遍历结束条件</span></span><br><span class="line"><span class="comment">     *  向上遍历：m递减到0或者n递增到最大值</span></span><br><span class="line"><span class="comment">     *  向下遍历：n递减到0或者m递增到最大值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 初始化返回值</span></span><br><span class="line">    <span class="keyword">let</span> res = [];</span><br><span class="line">    <span class="keyword">let</span> m = matrix.length;</span><br><span class="line">    <span class="comment">// 判断输入值长度为0直接返回</span></span><br><span class="line">    <span class="keyword">if</span> (m === <span class="number">0</span> || (m &gt; <span class="number">0</span> &amp;&amp; matrix[<span class="number">0</span>].length === <span class="number">0</span>)) <span class="keyword">return</span> res;</span><br><span class="line">    <span class="keyword">let</span> n = matrix[<span class="number">0</span>].length;</span><br><span class="line">    <span class="comment">// 定义Boolean traversal值为此时的遍历方式为向上还是向下</span></span><br><span class="line">    <span class="keyword">let</span> traversal = <span class="literal">true</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; m + n - <span class="number">1</span>; i++) &#123;</span><br><span class="line">	<span class="keyword">let</span> pm = traversal ? m : n;</span><br><span class="line">	<span class="keyword">let</span> pn = traversal ? n : m;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">let</span> x = (i &lt; pm) ? i : pm - <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">let</span> y = i - x;                </span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (x &gt;= <span class="number">0</span> &amp;&amp; y &lt; pn) &#123;</span><br><span class="line">	  res.push(traversal ? matrix[x][y] : matrix[y][x]);</span><br><span class="line">	  x--;</span><br><span class="line">	  y++;</span><br><span class="line">	&#125;</span><br><span class="line">	raversal = !traversal;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p><img src="/2019/12/27/first-missing-positive/example.png" alt="示例"></p>
+<h2 id="解法思路"><a href="#解法思路" class="headerlink" title="解法思路"></a>解法思路</h2><h3 id="思路一"><a href="#思路一" class="headerlink" title="思路一"></a>思路一</h3><p>遍历一次数组把大于等于1的和小于数组大小的值放到原数组对应位置，然后再遍历一次数组查当前下标是否和值对应，如果不对应那这个下标就是答案，否则遍历完都没出现那么答案就是数组长度加1。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (nums.length === <span class="number">0</span> || (nums.length === <span class="number">1</span> &amp;&amp; nums[<span class="number">0</span>] != <span class="number">1</span>) ) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">swap</span>(<span class="params">i,j</span>)</span>&#123;</span><br><span class="line">  nums[i] = nums[i] ^ nums[j];</span><br><span class="line">  nums[j] = nums[i] ^ nums[j];</span><br><span class="line">  nums[i] = nums[i] ^ nums[j];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 桶排序</span></span><br><span class="line"><span class="keyword">let</span> len = nums.length;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span>;i&lt;len;i++)&#123;</span><br><span class="line">  <span class="comment">// 新索引 nums[i] 处于 [1,length] 且不等于自身（如第三项不能为3：nums[2]!==3） 且 nums[新索引] 未排好</span></span><br><span class="line">  <span class="keyword">while</span>(nums[i]&gt;=<span class="number">1</span>&amp;&amp;nums[i]&lt;=len&amp;&amp;nums[i]!==i+<span class="number">1</span>&amp;&amp;nums[nums[i]<span class="number">-1</span>]!==nums[i])&#123;</span><br><span class="line">    swap(i,nums[i]<span class="number">-1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> j=<span class="number">0</span>;j&lt;len;j++)&#123;</span><br><span class="line">  <span class="keyword">if</span>(nums[j]!==j+<span class="number">1</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> j+<span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> len + <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><img src="/2019/12/27/first-missing-positive/submit1.png" alt="提交"></p>
+<h3 id="思路二"><a href="#思路二" class="headerlink" title="思路二"></a>思路二</h3><p>定义空数组，循环目标数组，将空数组中对应目标数组值的下标设为true；<br>最后遍历定义的数组，返回第一个值不为true的下标</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> arr=[],len=nums.length;</span><br><span class="line"><span class="keyword">if</span>(len===<span class="number">0</span>||len===<span class="number">1</span>&amp;&amp;nums[<span class="number">0</span>]!==<span class="number">1</span>)<span class="keyword">return</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span>;i&lt;len;i++)&#123;</span><br><span class="line">  <span class="keyword">if</span>(nums[i]&gt;=<span class="number">0</span>)arr[nums[i]]=<span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(!arr.length)<span class="keyword">return</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">let</span> len1=arr.length;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">1</span>;i&lt;len1;i++)&#123;</span><br><span class="line">  <span class="keyword">if</span>(!arr[i])&#123;</span><br><span class="line">    <span class="keyword">return</span> i</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(i===len1<span class="number">-1</span>)<span class="keyword">return</span> len1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/12/27/first-missing-positive/submit2.png" alt="提交"></p>
+
       </div>
       
       
@@ -377,7 +382,7 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-12-27T15:09:02+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-12-27T15:29:16+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
     <p>更新于 2019年12月27日</p>
@@ -402,7 +407,7 @@
       
         <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
           
-          href="http://connect.qq.com/widget/shareqq/index.html?url=https://heternally.github.io/2019/12/26/diagonal-traverse/&title=498.对角线遍历 (leetcode mid) | Heternally&summary="
+          href="http://connect.qq.com/widget/shareqq/index.html?url=https://heternally.github.io/2019/12/27/first-missing-positive/&title=41.缺失的第一个正数 (leetcode hard) | Heternally&summary="
           
           >
           
@@ -414,7 +419,7 @@
       
         <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
           
-          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://heternally.github.io/2019/12/26/diagonal-traverse/&title=498.对角线遍历 (leetcode mid) | Heternally&summary="
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://heternally.github.io/2019/12/27/first-missing-positive/&title=41.缺失的第一个正数 (leetcode hard) | Heternally&summary="
           
           >
           
@@ -426,7 +431,7 @@
       
         <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
           
-          href="http://service.weibo.com/share/share.php?url=https://heternally.github.io/2019/12/26/diagonal-traverse/&title=498.对角线遍历 (leetcode mid) | Heternally&summary="
+          href="http://service.weibo.com/share/share.php?url=https://heternally.github.io/2019/12/27/first-missing-positive/&title=41.缺失的第一个正数 (leetcode hard) | Heternally&summary="
           
           >
           
@@ -450,40 +455,21 @@
       
           <div class="prev-next">
               
-                  <section class="prev">
-                      <span class="art-item-left">
-                          <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+              
+                  <section class="next">
+                      <span class="art-item-right" aria-hidden="true">
+                          <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
                           <h4>
                               <a href="/2019/12/26/closure/" rel="prev" title="Javascript深入之闭包">
-                                
-                                    Javascript深入之闭包
-                                
+                                  
+                                      Javascript深入之闭包
+                                  
                               </a>
                           </h4>
                           
                               
                               <h6 class="tags">
                                   <a class="tag" href="/tags/Javascript/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Javascript</a> <a class="tag" href="/tags/%E6%B7%B1%E5%85%A5%E7%B3%BB%E5%88%97/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> 深入系列</a> <a class="tag" href="/tags/%E9%97%AD%E5%8C%85/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> 闭包</a>
-                              </h6>
-                          
-                      </span>
-                  </section>
-              
-              
-                  <section class="next">
-                      <span class="art-item-right" aria-hidden="true">
-                          <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
-                          <h4>
-                              <a href="/2019/12/23/about-this/" rel="prev" title="this全面解析">
-                                  
-                                      this全面解析
-                                  
-                              </a>
-                          </h4>
-                          
-                              
-                              <h6 class="tags">
-                                  <a class="tag" href="/tags/Javascript/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Javascript</a> <a class="tag" href="/tags/%E6%B7%B1%E5%85%A5%E7%B3%BB%E5%88%97/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> 深入系列</a> <a class="tag" href="/tags/this/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> this</a>
                               </h6>
                           
                       </span>
@@ -527,7 +513,7 @@
 
   <script>
     window.subData = {
-      title: '498.对角线遍历 (leetcode mid)',
+      title: '41.缺失的第一个正数 (leetcode hard)',
       tools: true
     }
   </script>
@@ -658,7 +644,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目"><span class="toc-text">题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解法"><span class="toc-text">解法</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目"><span class="toc-text">题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#示例"><span class="toc-text">示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解法思路"><span class="toc-text">解法思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#思路一"><span class="toc-text">思路一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#思路二"><span class="toc-text">思路二</span></a></li></ol></li></ol>
     </div>
   </section>
 
