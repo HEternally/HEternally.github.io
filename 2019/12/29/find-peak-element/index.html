@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   
-  <title>find-peak-element | Heternally</title>
+  <title>162.寻找峰值 (leetcode mid) | Heternally</title>
   
   
   <meta name="description" content="博客，前端博客，前端技术博客">
@@ -256,7 +256,7 @@
   
     <h1 class="title">
       <a href="/2019/12/29/find-peak-element/">
-        find-peak-element
+        162.寻找峰值 (leetcode mid)
       </a>
     </h1>
   
@@ -295,6 +295,14 @@
         
           
             
+  
+  <div class='new-meta-item category'>
+    <a href='/categories/Leetcode/Array/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Javascript&nbsp;/&nbsp;Leetcode&nbsp;/&nbsp;Array</p>
+    </a>
+  </div>
+
 
           
         
@@ -323,14 +331,14 @@
       <a class='notlink'>
         <i class="fas fa-keyboard" aria-hidden="true"></i>
         <p>字数统计:</p>
-        <p>0字</p>
+        <p>506字</p>
       </a>
     </div>
     <div class="new-meta-item readtime">
       <a class='notlink'>
         <i class="fas fa-hourglass-half" aria-hidden="true"></i>
         <p>阅读时长≈</p>
-        <p>1分</p>
+        <p>2分</p>
       </a>
     </div>
   
@@ -352,7 +360,20 @@
 
     <section class="article typo">
       <div class="article-entry" itemprop="articleBody">
-        
+        <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><blockquote>
+<p>峰值元素是指其值大于左右相邻值的元素。<br>给定一个输入数组 nums，其中 nums[i] ≠ nums[i+1]，找到峰值元素并返回其索引。<br>数组可能包含多个峰值，在这种情况下，返回任何一个峰值所在位置即可。<br>你可以假设 nums[-1] = nums[n] = -∞。</p>
+</blockquote>
+<p><img src="/2019/12/29/find-peak-element/example.png" alt="示例"></p>
+<blockquote>
+<p>说明：你的解法应该是 O(logN) 时间复杂度的。</p>
+</blockquote>
+<h2 id="思路一："><a href="#思路一：" class="headerlink" title="思路一："></a>思路一：</h2><p>1、标签：暴力法<br>2、过程：<br>题目给出了<code>muns[-1] = nums[n] = -∞</code>，所以<code>nums[0] &gt; nums[-1]</code>必定成立，那么我们只需要遍历数组，找到第一个i使得<code>nums[i] &gt; nums[i+1]</code>；<br>例如：<code>nums[0] &gt; nums[1]</code>,且此时<code>nums[0] &gt; nums[-1]</code>，则得出峰值元素下标为<code>0</code>。<br>3、时间复杂度：最差的情况下为O(n)，最好的情况下为O(1)</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> findPeakElement = <span class="function"><span class="keyword">function</span>(<span class="params">nums</span>) </span>&#123; </span><br><span class="line">    <span class="keyword">if</span> (nums.length === <span class="number">1</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">let</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(; i &lt; nums.length - <span class="number">1</span>; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(nums[i] &gt; nums[i+<span class="number">1</span>])&#123;</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> i</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/12/29/find-peak-element/submit2.png" alt="提交"></p>
+<h2 id="思路二："><a href="#思路二：" class="headerlink" title="思路二："></a>思路二：</h2><p>1、标签：二分查找<br>2、过程：<br>    i.首先要注意题目条件，在题目描述中出现了 <code>nums[-1] = nums[n] = -∞</code>，这就代表着 只要数组中存在一个元素比相邻元素大，那么沿着它一定可以找到一个峰值<br>    ii.根据上述结论，我们就可以使用二分查找找到峰值<br>    iii.查找时，左指针 l，右指针 r，以其保持左右顺序为循环条件<br>    Vi.根据左右指针计算中间位置 m，并比较 m 与 m+1 的值，如果 m 较大，则左侧存在峰值，r = m，如果 m + 1 较大，则右侧存在峰值，l = m + 1<br>3、时间复杂度：O(logN)</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> findPeakElement = <span class="function"><span class="keyword">function</span>(<span class="params">nums</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 题目要求时间复杂度为O(logn)，那么我们就想到可以使用二分法解决；</span></span><br><span class="line">    <span class="keyword">if</span> (nums.length === <span class="number">1</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">let</span> star = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">let</span> end = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">let</span> mid;</span><br><span class="line">    <span class="keyword">while</span>( star &lt; end ) &#123;</span><br><span class="line">        mid = <span class="built_in">parseInt</span>((star + end) / <span class="number">2</span>);</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &lt; nums[mid + <span class="number">1</span>]) &#123;</span><br><span class="line">            star = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            end = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> star;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/12/29/find-peak-element/submit1.png" alt="提交"></p>
+
       </div>
       
       
@@ -364,7 +385,7 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-12-29T22:09:27+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-12-29T22:31:25+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
     <p>更新于 2019年12月29日</p>
@@ -375,6 +396,9 @@
       
         
           
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/Javascript/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Javascript</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/tags/Leetcode/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Leetcode</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/tags/Array/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Array</p></a></div>
+
 
         
       
@@ -386,7 +410,7 @@
       
         <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
           
-          href="http://connect.qq.com/widget/shareqq/index.html?url=https://heternally.github.io/2019/12/29/find-peak-element/&title=find-peak-element | Heternally&summary="
+          href="http://connect.qq.com/widget/shareqq/index.html?url=https://heternally.github.io/2019/12/29/find-peak-element/&title=162.寻找峰值 (leetcode mid) | Heternally&summary="
           
           >
           
@@ -398,7 +422,7 @@
       
         <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
           
-          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://heternally.github.io/2019/12/29/find-peak-element/&title=find-peak-element | Heternally&summary="
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://heternally.github.io/2019/12/29/find-peak-element/&title=162.寻找峰值 (leetcode mid) | Heternally&summary="
           
           >
           
@@ -410,7 +434,7 @@
       
         <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
           
-          href="http://service.weibo.com/share/share.php?url=https://heternally.github.io/2019/12/29/find-peak-element/&title=find-peak-element | Heternally&summary="
+          href="http://service.weibo.com/share/share.php?url=https://heternally.github.io/2019/12/29/find-peak-element/&title=162.寻找峰值 (leetcode mid) | Heternally&summary="
           
           >
           
@@ -492,7 +516,7 @@
 
   <script>
     window.subData = {
-      title: 'find-peak-element',
+      title: '162.寻找峰值 (leetcode mid)',
       tools: true
     }
   </script>
@@ -613,6 +637,20 @@
           
             
               
+  <section class='widget toc-wrapper'>
+    
+<header class='pure'>
+  <div><i class="fas fa-list fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;本文目录</div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content pure'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目"><span class="toc-text">题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思路一："><span class="toc-text">思路一：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思路二："><span class="toc-text">思路二：</span></a></li></ol>
+    </div>
+  </section>
+
 
             
           
@@ -758,13 +796,13 @@
         
           <li><a class="flat-box" title="/categories/Hexo/" href="/categories/Hexo/"><div class='name'>Hexo</div><div class='badge'>(1)</div></a></li>
         
-          <li><a class="flat-box" title="/categories/Javascript/" href="/categories/Javascript/"><div class='name'>Javascript</div><div class='badge'>(4)</div></a></li>
+          <li><a class="flat-box" title="/categories/Javascript/" href="/categories/Javascript/"><div class='name'>Javascript</div><div class='badge'>(5)</div></a></li>
         
           <li><a class="flat-box child" title="/categories/Javascript/%E6%B7%B1%E5%85%A5%E7%B3%BB%E5%88%97/" href="/categories/Javascript/%E6%B7%B1%E5%85%A5%E7%B3%BB%E5%88%97/"><div class='name'>深入系列</div><div class='badge'>(2)</div></a></li>
         
-          <li><a class="flat-box" title="/categories/Leetcode/" href="/categories/Leetcode/"><div class='name'>Leetcode</div><div class='badge'>(2)</div></a></li>
+          <li><a class="flat-box" title="/categories/Leetcode/" href="/categories/Leetcode/"><div class='name'>Leetcode</div><div class='badge'>(3)</div></a></li>
         
-          <li><a class="flat-box child" title="/categories/Leetcode/Array/" href="/categories/Leetcode/Array/"><div class='name'>Array</div><div class='badge'>(2)</div></a></li>
+          <li><a class="flat-box child" title="/categories/Leetcode/Array/" href="/categories/Leetcode/Array/"><div class='name'>Array</div><div class='badge'>(3)</div></a></li>
         
           <li><a class="flat-box" title="/categories/%E6%B7%B1%E5%85%A5%E7%B3%BB%E5%88%97/" href="/categories/%E6%B7%B1%E5%85%A5%E7%B3%BB%E5%88%97/"><div class='name'>深入系列</div><div class='badge'>(2)</div></a></li>
         
@@ -821,7 +859,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/Array/" style="font-size: 19px; color: #777">Array</a> <a href="/tags/Javascript/" style="font-size: 24px; color: #555">Javascript</a> <a href="/tags/Leetcode/" style="font-size: 19px; color: #777">Leetcode</a> <a href="/tags/hexo/" style="font-size: 14px; color: #999">hexo</a> <a href="/tags/this/" style="font-size: 14px; color: #999">this</a> <a href="/tags/%E6%B7%B1%E5%85%A5%E7%B3%BB%E5%88%97/" style="font-size: 19px; color: #777">深入系列</a> <a href="/tags/%E9%97%AD%E5%8C%85/" style="font-size: 14px; color: #999">闭包</a>
+      <a href="/tags/Array/" style="font-size: 20.67px; color: #6c6c6c">Array</a> <a href="/tags/Javascript/" style="font-size: 24px; color: #555">Javascript</a> <a href="/tags/Leetcode/" style="font-size: 20.67px; color: #6c6c6c">Leetcode</a> <a href="/tags/hexo/" style="font-size: 14px; color: #999">hexo</a> <a href="/tags/this/" style="font-size: 14px; color: #999">this</a> <a href="/tags/%E6%B7%B1%E5%85%A5%E7%B3%BB%E5%88%97/" style="font-size: 17.33px; color: #828282">深入系列</a> <a href="/tags/%E9%97%AD%E5%8C%85/" style="font-size: 14px; color: #999">闭包</a>
     </div>
   </section>
 
